@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <style>
+            .main{
+                width: 400px;
+            }
+            #result{
+                width: 95%;
+                height:400px;
+                resize: none;
+                margin:10px;
+                font-size:16px;
+            }
+            .btnArea{
+                width:90%;
+                margin:0 auto 10px auto;
+                padding:0;
+            }
+            .btn{
+                margin:0;
+                display: inline-block;
+                width:45%;
+                height:30px;
+                background-color:#68e;
+                text-align:center;
+                font-size: 18px;
+                padding:10px;
+                color: #fff;
+                text-decoration: none;
+            }
+            .btn:hover{
+                background-color:#57d;
+            }
+            .log{
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color:#fffa;
+                color: #000;
+                font-weight: bold;
+                font-size: 20px;
+                text-align: center;
+                z-index: 1000;
+                margin: 0;
+                padding: 240px 0;
+            }
+            #gotoOption{
+                display: block;
+                width: 40px;
+                height: 40px;
+                margin:0;
+                float: right;
+                margin-right: 10px;
+                background-image: url(files/setting_icon.svg);
+                background-repeat: no-repeat;
+                background-size:contain;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main">
+            <textarea id="result"></textarea>
+            <div class="btnArea">
+                <a href="javascript:void(0);" id="copyID" class="btn">copy ASIN</a>
+                <a href="javascript:void(0);" id="gotoOption"></a>
+            </div>
+            <div id="log" class="log">コピーしました</div>
+        </div>
+    <script type="text/javascript" src="iconPopup.js"></script>
+    </body>
+</html>
