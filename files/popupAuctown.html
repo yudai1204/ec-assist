@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        .tableBody,
+        .tableTd {
+            border: 1px solid #000;
+        }
+
+        .tableBody {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .tableTd {
+            display: inline-block;
+            margin: 2px 1px;
+            padding: 0px;
+        }
+
+        .tableTd:nth-child(2n+1) {
+            width: 15%;
+        }
+
+        .tableTd:nth-child(2n) {
+            width: 75%;
+        }
+
+        .tableTr {
+            margin: 2px;
+        }
+
+        #utlPopupWindow {
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            position: fixed;
+            background-color: #fff;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        #utlGrayLayer {
+            position: fixed;
+            background-color: #0006;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            z-index: 999;
+        }
+
+        button {
+            margin-left: 1em;
+        }
+
+        #copyAmzn,
+        #copySpread {
+            margin: .5em auto 0 auto;
+            padding: .5em 1em;
+            width: 90%;
+        }
+
+        .copied {
+            position: fixed;
+            display: block;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fffb;
+            text-align: center;
+            padding: 30vh 0;
+            color: #000;
+            font-weight: bold;
+            font-size: 150%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="utlPopupWindow">
+        <h2>現在選択されている注文情報</h2>
+        <h3 id="orderTitle"><button>コピー</button></h3>
+        <div class="popupTableArea">
+            <div class="tableBody">
+                <div class="tableTr">
+                    <div class="tableTd">ヤフオク販売画像</div>
+                    <div class="tableTd" id="orderYahooImg">loading</div>
+                </div>
+            </div>
+            <div class="tableBody">
+                <div class="tableTr">
+                    <div class="tableTd">オークションID</div>
+                    <div class="tableTd" id="auctionID">loading</div>
+                </div>
+                <div class="tableTr">
+                    <div class="tableTd">ASIN</div>
+                    <div class="tableTd" id="asin">loading</div>
+                </div>
+                <div class="tableTr">
+                    <div class="tableTd">落札価格</div>
+                    <div class="tableTd" id="price">loading</div>
+                </div>
+                <div class="tableTr">
+                    <div class="tableTd">配送方法</div>
+                    <div class="tableTd" id="delivery">loading</div>
+                </div>
+                <div class="tableTr">
+                    <div class="tableTd">郵便番号</div>
+                    <div class="tableTd" id="orderPost">loading</div>
+                </div>
+                <div class="tableTr">
+                    <div class="tableTd">住所</div>
+                    <div class="tableTd" id="orderAddress">loading</div>
+                </div>
+                <div class="tableTr">
+                    <div class="tableTd">名前</div>
+                    <div class="tableTd" id="orderName">loading</div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button id="copyAmzn">アマゾン形式でコピー</button>
+            <button id="copySpread">スプレッドシート形式でコピー</button>
+            <div id="result"></div>
+        </div>
+    </div>
+    <script type="text/javascript" src="popupAuctown.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <title>options</title>
+        <style>
+            body > div{
+                border: 1px solid #ccc;
+                margin: 5px;
+                padding: 5px;
+            }
+            .subtitle {
+            width: 100px;
+            display: inline-block;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>EC-Assist オプションページ</h2>
+        <div>
+            <strong>設定</strong><br>
+            <span class="subtitle">Width:</span><input type="number" id="winW">px<br>
+            <span class="subtitle">Height:</span><input type="number" id="winH">px<br>
+            <span class="subtitle">電話番号:</span><input type="text" id="phoneNum"><br>
+            <span class="subtitle">ｽﾌﾟｼ名前修飾:</span><input type="text" id="titleBefore"><br> 
+            金額・注文番号を取得する:<input type="checkbox" id="getMercariMoreMode"><br>
+            <span class="subtitle">ﾒﾙｶﾘ定型文:</span><textarea id="mercariPlaceholder" style="width:400px;height:100px;"></textarea><br>
+            <span class="subtitle">ﾔﾌｵｸ定型文</span><textarea id="explainFormat" style="width:400px;height:100px;"></textarea><br>
+            <span class="subtitle">ﾔﾌｵｸｽﾄｱ即決価格差額</span>開始価格+<input type="number" id="storeMargin">円<br>
+            <span class="subtitle">GASURL</span><input type="text" id="gasurl" placeholder="自動割当"><br>
+            <button id="save">保存</button>
+            <span id="log"></span>
+        </div>
+        <div>
+            <strong>オークタウン用: Haru CSVをアップロードする</strong>
+            <p><input type="file" id="harucsv"></p>
+            <div id="message"></div>
+            <div id="csv_data_table"></div>
+            <button id="upload">アップロード開始</button>
+        </div>
+        <script src="option.js"></script>
+    </body>
+</html>
