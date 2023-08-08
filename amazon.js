@@ -66,6 +66,7 @@ function auctownAutoInput(autoSub){
             console.log(items.recentTrade);
             const phoneArea        = document.getElementById("address-ui-widgets-enterAddressPhoneNumber");
             const nameArea         = document.getElementById("address-ui-widgets-enterAddressFullName");
+            const postArea         = document.getElementById("address-ui-widgets-enterAddressPostalCode");
             const postArea1        = document.getElementById("address-ui-widgets-enterAddressPostalCodeOne");
             const postArea2        = document.getElementById("address-ui-widgets-enterAddressPostalCodeTwo");
             const prefectureArea   = document.getElementById("address-ui-widgets-enterAddressStateOrRegion-dropdown-nativeId");
@@ -73,14 +74,18 @@ function auctownAutoInput(autoSub){
             const choume           = document.getElementById("address-ui-widgets-enterAddressLine2");
             const apartName        = document.getElementById("address-ui-widgets-enterBuildingOrCompanyName");
             const unitNum          = document.getElementById("address-ui-widgets-enterUnitOrRoomNumber");
-            if(phoneArea && nameArea && postArea1 && postArea2 && prefectureArea && municipalityArea && choume && apartName && unitNum){
+            if(phoneArea && nameArea  && prefectureArea && municipalityArea && choume && apartName && unitNum && (postArea || (postArea1 && postArea2))){
                 //電話番号
                 phoneArea.value = items.phoneNum;
                 //氏名
                 nameArea.value = items.recentTrade.name;
                 //郵便番号
-                postArea1.value = items.recentTrade.postnum1;
-                postArea2.value = items.recentTrade.postnum2;
+                if(postArea1 && postArea2){
+                    postArea1.value = items.recentTrade.postnum1;
+                    postArea2.value = items.recentTrade.postnum2;
+                }else{
+                    postArea.value = items.recentTrade.postnum1 + "-" + items.recentTrade.postnum2;
+                }
                 //都道府県
                 prefectureArea.value = items.recentTrade.prefecture;
                 //市町村
@@ -117,19 +122,24 @@ function mercariAutoInput(autoSub){
             const nameArea         = document.getElementById("address-ui-widgets-enterAddressFullName");
             const postArea1        = document.getElementById("address-ui-widgets-enterAddressPostalCodeOne");
             const postArea2        = document.getElementById("address-ui-widgets-enterAddressPostalCodeTwo");
+            const postArea         = document.getElementById("address-ui-widgets-enterAddressPostalCode");
             const prefectureArea   = document.getElementById("address-ui-widgets-enterAddressStateOrRegion-dropdown-nativeId");
             const municipalityArea = document.getElementById("address-ui-widgets-enterAddressLine1");
             const choume           = document.getElementById("address-ui-widgets-enterAddressLine2");
             const apartName        = document.getElementById("address-ui-widgets-enterBuildingOrCompanyName");
             const unitNum          = document.getElementById("address-ui-widgets-enterUnitOrRoomNumber");
-            if(phoneArea && nameArea && postArea1 && postArea2 && prefectureArea && municipalityArea && choume && apartName && unitNum){
+            if(phoneArea && nameArea  && prefectureArea && municipalityArea && choume && apartName && unitNum && (postArea || (postArea1 && postArea2))){
                 //電話番号
                 phoneArea.value = items.phoneNum;
                 //氏名
                 nameArea.value = items.mercariRecentTrade.name;
                 //郵便番号
-                postArea1.value = items.mercariRecentTrade.postnum1;
-                postArea2.value = items.mercariRecentTrade.postnum2;
+                if(postArea1 && postArea2){
+                    postArea1.value = items.mercariRecentTrade.postnum1;
+                    postArea2.value = items.mercariRecentTrade.postnum2;
+                }else{
+                    postArea.value = items.mercariRecentTrade.postnum1 + "-" + items.mercariRecentTrade.postnum2;
+                }
                 //都道府県
                 prefectureArea.value = items.mercariRecentTrade.prefecture;
                 //市町村
@@ -177,19 +187,24 @@ function clipboardAutoInput(autoSub){
                 const nameArea         = document.getElementById("address-ui-widgets-enterAddressFullName");
                 const postArea1        = document.getElementById("address-ui-widgets-enterAddressPostalCodeOne");
                 const postArea2        = document.getElementById("address-ui-widgets-enterAddressPostalCodeTwo");
+                const postArea         = document.getElementById("address-ui-widgets-enterAddressPostalCode");
                 const prefectureArea   = document.getElementById("address-ui-widgets-enterAddressStateOrRegion-dropdown-nativeId");
                 const municipalityArea = document.getElementById("address-ui-widgets-enterAddressLine1");
                 const choume           = document.getElementById("address-ui-widgets-enterAddressLine2");
                 const apartName        = document.getElementById("address-ui-widgets-enterBuildingOrCompanyName");
                 const unitNum          = document.getElementById("address-ui-widgets-enterUnitOrRoomNumber");
-                if(phoneArea && nameArea && postArea1 && postArea2 && prefectureArea && municipalityArea && choume && apartName && unitNum){
+                if(phoneArea && nameArea  && prefectureArea && municipalityArea && choume && apartName && unitNum && (postArea || (postArea1 && postArea2))){
                     //電話番号
                     phoneArea.value = data.tel || items.phoneNum;
                     //氏名
                     nameArea.value = data.name;
                     //郵便番号
-                    postArea1.value = data.postnum1;
-                    postArea2.value = data.postnum2;
+                    if(postArea1 && postArea2){
+                        postArea1.value = data.postnum1;
+                        postArea2.value = data.postnum2;
+                    }else{
+                        postArea.value = data.postnum1 + "-" + data.postnum2;
+                    }
                     //都道府県
                     prefectureArea.value = data.prefecture;
                     //市町村
