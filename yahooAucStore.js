@@ -1,4 +1,5 @@
 if (location.href.includes("https://auctions.store.yahoo.co.jp/serinavi/items")) {
+    let extEndPage = 0;
     //loadしたらajax確認して挿入
     function insertCheckByCsvBtn() {
         // loadingマーク出てたら飛ばす
@@ -33,8 +34,17 @@ if (location.href.includes("https://auctions.store.yahoo.co.jp/serinavi/items"))
                 <div style="margin-bottom:5px">
                     Haru CSVアップロード: <input id="ecassist-haru-upload" type="file" accept=".csv">
                 </div>
+                <div style="border-bottom: 1px solid #888; border-top: 1px solid #888; padding: 5px 0; margin-bottom:5px;">
+                <button disabled id="ecassist-zaikogire-onpage-btn">在庫切れ抽出（ページ指定）</button>
+                （
+                    <div style="font-size: 13px; display: inline-block;">
+                        現在のページから
+                        <input type="number" id="ecassist-zaikogire-end" value="1" min="1" placeholder="1" style="width: 4em; height:16px;">ページ目まで
+                    </div>
+                ）
+                </div>
                 <div>
-                    <button disabled id="ecassist-zaikogire-btn">在庫切れ抽出</button>
+                    <button disabled id="ecassist-zaikogire-btn">在庫切れ抽出（すべてのページ）</button>
                     <button disabled id="ecassist-akaji-btn">赤字商品抽出(未実装)</button>
                 </div>
             </div>
@@ -76,6 +86,7 @@ if (location.href.includes("https://auctions.store.yahoo.co.jp/serinavi/items"))
                 }
                 alert("CSVを読み込みました");
                 document.getElementById("ecassist-zaikogire-btn").disabled = false;
+                document.getElementById("ecassist-zaikogire-onpage-btn").disabled = false;
                 document.getElementById("ecassist-akaji-btn").disabled = false;
             }
         });
@@ -118,7 +129,7 @@ if (location.href.includes("https://auctions.store.yahoo.co.jp/serinavi/items"))
             }
         });
         document.getElementById("ecassist-zaikogire-btn").addEventListener("click", () => {
-            if (confirm("在庫切れ抽出を開始しますか？")) {
+            if (confirm("在庫切れ抽出（すべてのページ）を開始しますか？")) {
                 if (csvArray.length < 2) {
                     alert("Error: CSVデータが不正です");
                     return;
@@ -153,6 +164,45 @@ if (location.href.includes("https://auctions.store.yahoo.co.jp/serinavi/items"))
                     `)
                 //メインroutineに移行
                 getMain(asinArray, csvArray, 0);
+            }
+        });
+        document.getElementById("ecassist-zaikogire-onpage-btn").addEventListener("click", () => {
+            if (confirm("在庫切れ抽出（ページ指定）を開始しますか？")) {
+                if (csvArray.length < 2) {
+                    alert("Error: CSVデータが不正です");
+                    return;
+                }
+                //log areaを用意
+                document.body.insertAdjacentHTML("beforeend", `
+                    <style>
+                    #ecassist-overlay{
+                        display: block;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: #0005;
+                        z-index: 1000;
+                    }
+                    #ecassist-overlay > div{
+                        width:50%;
+                        height: 40vh;
+                        margin-top: 30vh;
+                        margin-left: 15vw;
+                        background-color: #fff;
+                    }
+                    </style>
+                    <div id="ecassist-overlay">
+                        <div>
+                            <h2>データを取得中です…</h2>
+                            <span id="ecassist-message-area"></span>
+                        </div>
+                    </div>
+                    `)
+                //メインroutineに移行
+                extEndPage = Number(document.getElementById("ecassist-zaikogire-end").value);
+                getMain(asinArray, csvArray, 2);
             }
         });
     }
@@ -206,7 +256,7 @@ if (location.href.includes("https://auctions.store.yahoo.co.jp/serinavi/items"))
                         console.log("> " + csvArray[asinContainNum]["在庫ワード-アラート(0:アラート or 1:なし)"]);
                         logcsv += `"${asin}","1","1","${csvArray[asinContainNum]["在庫ワード-アラート(0:アラート or 1:なし)"]}","${csvArray[asinContainNum]["Amazon最新価格1"]}","${kakakuNode.innerHTML.replace(/[^0-9]/g, "")}","${Number(kakakuNode.innerHTML.replace(/[^0-9]/g, "")) * 0.9 - Number(csvArray[asinContainNum]["Amazon最新価格1"])}"\n`;
 
-                        if (domode == 0 && csvArray[asinContainNum]["在庫ワード-アラート(0:アラート or 1:なし)"] == "0") {
+                        if ((domode == 0 || domode == 2)&& csvArray[asinContainNum]["在庫ワード-アラート(0:アラート or 1:なし)"] == "0") {
                             //在庫なかったらcheck
                             ul.querySelector('.sc-kkGfuU.JBWYT').click();
                         } else if (domode == 1 && Number(kakakuNode.innerHTML.replace(/[^0-9]/g, "")) * 0.9 - Number(csvArray[asinContainNum]["Amazon最新価格1"]) <= 0) {
@@ -217,7 +267,11 @@ if (location.href.includes("https://auctions.store.yahoo.co.jp/serinavi/items"))
                 }
             }
             //次ボタンを押す
-            if (document.getElementsByTagName("body")[0].querySelectorAll(".sc-jDwBTQ.fDtmjj").length > 0) {
+            const nowPage = Number( location.href.match(/page=([0-9]+)/) && location.href.match(/page=([0-9]+)/)[1] || 1 );
+            if (domode < 2 && document.getElementsByTagName("body")[0].querySelectorAll(".sc-jDwBTQ.fDtmjj").length > 0) {
+                document.getElementsByTagName("body")[0].querySelector(".sc-jDwBTQ.fDtmjj").click();
+                setTimeout(() => { getMain(asinArray, csvArray, domode); }, storageItems.yahooAucIntervalTime);
+            } else if (domode == 2 && document.getElementsByTagName("body")[0].querySelectorAll(".sc-jDwBTQ.fDtmjj").length > 0 && extEndPage > 1 && nowPage < extEndPage) {
                 document.getElementsByTagName("body")[0].querySelector(".sc-jDwBTQ.fDtmjj").click();
                 setTimeout(() => { getMain(asinArray, csvArray, domode); }, storageItems.yahooAucIntervalTime);
             } else {
