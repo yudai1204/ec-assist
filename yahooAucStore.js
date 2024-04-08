@@ -259,6 +259,7 @@ if (
   //メイン
   let logcsv = `"抽出ASIN","適正ASIN(1:適正 0:不適正)","HARU該当(1: 該当あり 0: 該当なし)","HARU在庫アラート","HARU Amazon最新価格","ヤフオク出品価格","収支(マイナスで赤字)"\n`;
   function getMain(asinArray, csvArray, domode) {
+    console.log({ domode });
     chrome.storage.local.get(
       {
         yahooAucIntervalTime: 3000,
@@ -285,19 +286,20 @@ if (
           return;
         }
         //進捗表示
-        const nowCounterArray = document
-          .getElementsByTagName("body")[0]
-          .querySelector(pagesBarMagicSelector)
-          .querySelectorAll(":scope > div:nth-child(1) > div > p");
+        const nowCounterArray = [
+          ...document
+            .getElementsByTagName("body")[0]
+            .querySelector(pagesBarMagicSelector)
+            .querySelectorAll(":scope > div:nth-child(1) > div > p"),
+        ].map((x) => x.innerText);
 
-        document.getElementById("ecassist-message-area").innerHTML =
-          "進捗: " +
+        document.getElementById("ecassist-message-area").innerHTML = `進捗: ${
           Math.floor(
-            Number(nowCounterArray[1].innerText.split("〜")[0]) /
-              (Number(nowCounterArray[0].innerText.replace(/[^0-9]/g, "")) *
-                100)
-          ) +
-          "%";
+            (Number(nowCounterArray[1].split("〜")[0].replace(/[^0-9]/g, "")) /
+              Number(nowCounterArray[0].replace(/[^0-9]/g, ""))) *
+              1000
+          ) / 10
+        } %`;
         //tableから行データを抜き出す
         for (const ul of table.querySelectorAll(
           "ul:has(li input[type='checkbox'])"
@@ -310,31 +312,31 @@ if (
             .querySelector("p:nth-child(2)");
           if (kanriNode) {
             const asin = kanriNode.innerHTML.slice(-10);
-            console.log(asin);
-            console.log(
-              "価格 > " + kakakuNode.innerHTML.replace(/[^0-9]/g, "")
-            );
+            // console.log(asin);
+            // console.log(
+            //   "価格 > " + kakakuNode.innerHTML.replace(/[^0-9]/g, "")
+            // );
             //asinチェック
             if (asin && asin.length === 10 && /^[A-Z0-9]*$/.test(asin)) {
-              console.log("正しいASIN");
+              // console.log("正しいASIN");
             } else {
-              console.log("不正なASIN");
+              // console.log("不正なASIN");
               logcsv += `"${asin}","0","","","","",""\n`;
               continue;
             }
             const asinContainNum = asinArray.indexOf(asin);
             if (asinContainNum < 0) {
               //見つからなかった場合
-              console.log("> 該当なし");
+              // console.log("> 該当なし");
               logcsv += `"${asin}","1","0","","","",""\n`;
             } else {
-              console.log("> " + csvArray[asinContainNum]["ASINコード"]);
-              console.log(
-                "> " +
-                  csvArray[asinContainNum][
-                    "在庫ワード-アラート(0:アラート or 1:なし)"
-                  ]
-              );
+              // console.log("> " + csvArray[asinContainNum]["ASINコード"]);
+              // console.log(
+              //   "> " +
+              //     csvArray[asinContainNum][
+              //       "在庫ワード-アラート(0:アラート or 1:なし)"
+              //     ]
+              // );
               logcsv += `"${asin}","1","1","${
                 csvArray[asinContainNum][
                   "在庫ワード-アラート(0:アラート or 1:なし)"
@@ -358,10 +360,15 @@ if (
                   .click();
               } else if (
                 domode == 1 &&
-                Number(kakakuNode.innerHTML.replace(/[^0-9]/g, "")) * 0.9 -
+                Number(kakakuNode.innerText.replace(/[^0-9]/g, "")) * 0.9 -
                   Number(csvArray[asinContainNum]["Amazon最新価格1"]) <=
                   0
               ) {
+                console.log(
+                  Number(kakakuNode.innerText.replace(/[^0-9]/g, "")) * 0.9 -
+                    Number(csvArray[asinContainNum]["Amazon最新価格1"]) <=
+                    0
+                );
                 //赤字だったらcheck
                 ul.querySelectorAll(":scope > li")[0]
                   .querySelector("label")
@@ -384,7 +391,9 @@ if (
             1
         );
         if (domode < 2 && nextButton) {
-          nextButton.click();
+          setTimeout(() => {
+            nextButton.click();
+          }, 100);
           setTimeout(() => {
             getMain(asinArray, csvArray, domode);
           }, storageItems.yahooAucIntervalTime);
@@ -394,8 +403,9 @@ if (
           extEndPage > 1 &&
           nowPage < extEndPage
         ) {
-          document;
-          nextButton.click();
+          setTimeout(() => {
+            nextButton.click();
+          }, 100);
           setTimeout(() => {
             getMain(asinArray, csvArray, domode);
           }, storageItems.yahooAucIntervalTime);
