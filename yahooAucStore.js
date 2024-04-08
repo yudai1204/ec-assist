@@ -275,30 +275,27 @@ if (
           }, storageItems.yahooAucIntervalTime);
           return;
         }
-        const table = document.querySelector(
-          "main > div > div:has(>div) > div:has(ul>li>label>div>label>input)"
-        );
+        const table = document
+          .getElementsByTagName("body")[0]
+          .querySelector(
+            "main > div > div:has(>div) > div:has(ul>li>label>div>label>input)"
+          );
         if (!table) {
           alert("Error: notable");
           return;
         }
         //進捗表示
+        const nowCounterArray = document
+          .getElementsByTagName("body")[0]
+          .querySelector(pagesBarMagicSelector)
+          .querySelectorAll(":scope > div:nth-child(1) > div > p");
+
         document.getElementById("ecassist-message-area").innerHTML =
           "進捗: " +
           Math.floor(
-            (Number(
-              document
-                .getElementsByTagName("body")[0]
-                .querySelector(".sc-jAaTju.jLLxbV")
-                .childNodes[0].nodeValue.replace(/,/g, "")
-            ) /
-              Number(
-                document
-                  .getElementsByTagName("body")[0]
-                  .querySelector(".sc-cMljjf.kSOPKl")
-                  .innerHTML.replace(/,/g, "")
-              )) *
-              100
+            Number(nowCounterArray[1].innerText.split("〜")[0]) /
+              (Number(nowCounterArray[0].innerText.replace(/[^0-9]/g, "")) *
+                100)
           ) +
           "%";
         //tableから行データを抜き出す
