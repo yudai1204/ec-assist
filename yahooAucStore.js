@@ -343,8 +343,15 @@ if (
                 ]
               }","${
                 csvArray[asinContainNum]["Amazon最新価格1"]
-              }","${kakakuNode.innerHTML.replace(/[^0-9]/g, "")}","${
-                Number(kakakuNode.innerHTML.replace(/[^0-9]/g, "")) * 0.9 -
+              }","${kakakuNode.innerHTML
+                .match(/[0-9,]+円/g)[0]
+                .replace(/[^0-9]/g, "")}","${
+                Number(
+                  kakakuNode.innerHTML
+                    .match(/[0-9,]+円/g)[0]
+                    .replace(/[^0-9]/g, "")
+                ) *
+                  0.9 -
                 Number(csvArray[asinContainNum]["Amazon最新価格1"])
               }"\n`;
 
