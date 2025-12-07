@@ -8,6 +8,7 @@ chrome.storage.local.get({
     document.getElementById("orderPost").innerHTML = "〒"+tradeData.postnum1+"-"+tradeData.postnum2;
     document.getElementById("orderAddress").innerHTML = `${tradeData.prefecture} ${tradeData.municipality} ${tradeData.choume} ${tradeData.apart}`;
     document.getElementById("orderName").innerHTML = tradeData.name;
+    document.getElementById("phoneNum").innerHTML = tradeData.phoneNum;
     document.getElementById("orderID").innerHTML = tradeData.id;
     document.getElementById("price").innerHTML = (tradeData.price == "取得できません")?tradeData.price:tradeData.price+"円";
     document.getElementById("manageCode").innerHTML = (tradeData.manageCode)?`<a href="javascript:void(0);" id="manageCodeCopy">${tradeData.manageCode}</a>`:"取得できません";
@@ -80,3 +81,4 @@ function setClipboard(data,type){
             alert("Error:クリップボードへのアクセスを許可してください");
         })
 }
+

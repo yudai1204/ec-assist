@@ -3,7 +3,7 @@
 
   "manifest_version": 3,
   "name": "EC Assist",
-  "version": "1.7.9",
+  "version": "1.7.16",
   "description": "ECサイトをカスタム",
   "background": {
     "service_worker": "background.js"
@@ -27,6 +27,7 @@
         "amazon.js",
         "dseller.js",
         "autohyoka.js",
+        "yahooAucStorePro.js",
         "yahooAucStore.js"
       ]
     }

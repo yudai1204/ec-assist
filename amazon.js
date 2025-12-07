@@ -1,8 +1,48 @@
+
+const TIME_OUT = 9999;
+
+const ADDRES_KAKUTEI_BTN_ID = `[data-csa-c-slot-id="address-ui-widgets-continue-address-btn-bottom"]`;
+
+
+// function addresAutoInput(func) {
+//     console.log(`func: ${func.name}`);
+//     const intervalCheck = setInterval(function(){
+//         if(document.getElementById("add-new-address-desktop-sasp-tango-link")){
+//             clearInterval(intervalCheck);
+//             func(true);
+//         }
+//     },300);
+// }
+
+
+
+// //amazonだったら
+// if(location.href.includes("https://www.amazon.co.jp/gp/buy/gift/handlers/")||location.href.includes("https://www.amazon.co.jp/gp/buy/spc/handlers/")||location.href.includes("https://www.amazon.co.jp/gp/buy/addressselect/handlers/")||location.href.includes("https://www.amazon.co.jp/gp/buy/payselect/handlers/")){
+//     //ボタン挿入自動化
+//     console.log("AMAZON");
+//     const addressChangeLinkId = document.getElementById("addressChangeLinkId");
+//     if(addressChangeLinkId){
+//         addressChangeLinkId.insertAdjacentHTML("afterend",`
+//             <div><a href="javascript:void(0);" id="auctownAddressBtn" class="a-button a-button-primary a-spacing-micro">保存住所<br>(オークタウン)</a></div>
+//             <div><a href="javascript:void(0);" id="mercariAddressBtn" class="a-button a-button-primary a-spacing-micro">保存住所<br>(メルカリ)</a></div>
+//             <div><a href="javascript:void(0);" id="clipboardAddressBtn" class="a-button a-button-primary a-spacing-micro">保存住所<br>(クリップボード)</a></div>
+//         `);
+//         document.getElementById("auctownAddressBtn").addEventListener("click",function(){
+//             addresAutoInput(auctownAutoInput);
+//         });
+//         document.getElementById("mercariAddressBtn").addEventListener("click",function(){
+//             mercariAutoInput(mercariAutoInput);
+//         });
+//         document.getElementById("clipboardAddressBtn").addEventListener("click",function(){
+//             mercariAutoInput(clipxboardAutoInput);
+//         });
+//     }
+
 //amazonだったら
-if(location.href.includes("https://www.amazon.co.jp/gp/buy/gift/handlers/")||location.href.includes("https://www.amazon.co.jp/gp/buy/spc/handlers/")||location.href.includes("https://www.amazon.co.jp/gp/buy/addressselect/handlers/")||location.href.includes("https://www.amazon.co.jp/gp/buy/payselect/handlers/")){
+if(location.href.includes("https://www.amazon.co.jp/gp/buy/gift/handlers/")||location.href.includes("https://www.amazon.co.jp/gp/buy/spc/handlers/")||location.href.includes("https://www.amazon.co.jp/gp/buy/addressselect/handlers/")||location.href.includes("https://www.amazon.co.jp/gp/buy/payselect/handlers/")||location.href.includes("https://www.amazon.co.jp/checkout/")){
     //ボタン挿入自動化
     console.log("AMAZON");
-    const addressChangeLinkId = document.getElementById("addressChangeLinkId");
+    const addressChangeLinkId = document.querySelector('[aria-label="お届け先住所を変更"]');
     if(addressChangeLinkId){
         addressChangeLinkId.insertAdjacentHTML("afterend",`
             <div><a href="javascript:void(0);" id="auctownAddressBtn" class="a-button a-button-primary a-spacing-micro">保存住所<br>(オークタウン)</a></div>
@@ -11,7 +51,7 @@ if(location.href.includes("https://www.amazon.co.jp/gp/buy/gift/handlers/")||loc
         `);
         document.getElementById("auctownAddressBtn").addEventListener("click",function(){
             const intervalCheck = setInterval(function(){
-                if(document.getElementById("address-ui-widgets-form-submit-button")){
+                if(document.getElementById("add-new-address-desktop-sasp-tango-link")){
                     clearInterval(intervalCheck);
                     auctownAutoInput(true);
                 }
@@ -19,16 +59,19 @@ if(location.href.includes("https://www.amazon.co.jp/gp/buy/gift/handlers/")||loc
         });
         document.getElementById("mercariAddressBtn").addEventListener("click",function(){
             const intervalCheck = setInterval(function(){
-                if(document.getElementById("address-ui-widgets-form-submit-button")){
+                if(document.getElementById("add-new-address-desktop-sasp-tango-link")){
                     clearInterval(intervalCheck);
                     mercariAutoInput(true);
                 }
             },300);
         });
         document.getElementById("clipboardAddressBtn").addEventListener("click",function(){
-            const intervalCheck = setInterval(function(){
-                if(document.getElementById("address-ui-widgets-form-submit-button")){
+            console.log("clicked");
+            const intervalCheck = setInterval(async function(){
+                if(document.getElementById("add-new-address-desktop-sasp-tango-link")){
                     clearInterval(intervalCheck);
+                    document.getElementById("add-new-address-desktop-sasp-tango-link").click();
+                    await waitForElement("#address-ui-widgets-enterAddressPhoneNumber");
                     clipboardAutoInput(true);
                 }
             },300);
@@ -56,24 +99,16 @@ if(location.href.includes("https://www.amazon.co.jp/gp/buy/gift/handlers/")||loc
     },1000);
 }
 
-function auctownAutoInput(autoSub){
+async function auctownAutoInput(autoSub){
     chrome.storage.local.get({
         recentTrade: null,
         tradeDataList: [],
         phoneNum: "000-0000-0000"
-    },function(items){
+    }, async function(items){
         if(items.recentTrade != null && items.tradeDataList.length > 0){
             console.log(items.recentTrade);
-            const phoneArea        = document.getElementById("address-ui-widgets-enterAddressPhoneNumber");
-            const nameArea         = document.getElementById("address-ui-widgets-enterAddressFullName");
-            const postArea         = document.getElementById("address-ui-widgets-enterAddressPostalCode");
-            const postArea1        = document.getElementById("address-ui-widgets-enterAddressPostalCodeOne");
-            const postArea2        = document.getElementById("address-ui-widgets-enterAddressPostalCodeTwo");
-            const prefectureArea   = document.getElementById("address-ui-widgets-enterAddressStateOrRegion-dropdown-nativeId");
-            const municipalityArea = document.getElementById("address-ui-widgets-enterAddressLine1");
-            const choume           = document.getElementById("address-ui-widgets-enterAddressLine2");
-            const apartName        = document.getElementById("address-ui-widgets-enterBuildingOrCompanyName");
-            const unitNum          = document.getElementById("address-ui-widgets-enterUnitOrRoomNumber");
+            const [phoneArea, nameArea, postArea1, postArea2, postArea, prefectureArea, municipalityArea, choume, apartName, unitNum] = getAllInputElem();
+
             if(phoneArea && nameArea  && prefectureArea && municipalityArea && choume && apartName && unitNum && (postArea || (postArea1 && postArea2))){
                 //電話番号
                 phoneArea.value = items.phoneNum;
@@ -93,41 +128,29 @@ function auctownAutoInput(autoSub){
                 //丁目・番地
                 choume.value = items.recentTrade.choume;
                 apartName.value = items.recentTrade.apart;
-                if(autoSub){
-                    if ( document.getElementById("address-ui-widgets-form-submit-button") ){
-                        document.getElementById("address-ui-widgets-form-submit-button").click();
-                    }
-                }
+                await clickUseThisAddressBtn(autoSub);
             }else{
                 alert("入力欄が存在しません");
             }
         }else{
             alert("データが存在しません");
-            if(autoSub){
-                document.getElementById("add-new-address-popover-link").click();
-            }
+            // if(autoSub){
+            //     document.getElementById("add-new-address-desktop-sasp-tango-link").click();
+            // }
         }
     });
 }
 
-function mercariAutoInput(autoSub){
+async function mercariAutoInput(autoSub){
     chrome.storage.local.get({
         mercariRecentTrade: null,
         tradeDataList: [],
         phoneNum: "000-0000-0000"
-    },function(items){
+    }, async function(items){
         if(items.mercariRecentTrade != null && items.tradeDataList.length > 0){
             console.log(items.mercariRecentTrade);
-            const phoneArea        = document.getElementById("address-ui-widgets-enterAddressPhoneNumber");
-            const nameArea         = document.getElementById("address-ui-widgets-enterAddressFullName");
-            const postArea1        = document.getElementById("address-ui-widgets-enterAddressPostalCodeOne");
-            const postArea2        = document.getElementById("address-ui-widgets-enterAddressPostalCodeTwo");
-            const postArea         = document.getElementById("address-ui-widgets-enterAddressPostalCode");
-            const prefectureArea   = document.getElementById("address-ui-widgets-enterAddressStateOrRegion-dropdown-nativeId");
-            const municipalityArea = document.getElementById("address-ui-widgets-enterAddressLine1");
-            const choume           = document.getElementById("address-ui-widgets-enterAddressLine2");
-            const apartName        = document.getElementById("address-ui-widgets-enterBuildingOrCompanyName");
-            const unitNum          = document.getElementById("address-ui-widgets-enterUnitOrRoomNumber");
+            const [phoneArea, nameArea, postArea1, postArea2, postArea, prefectureArea, municipalityArea, choume, apartName, unitNum] = getAllInputElem();
+
             if(phoneArea && nameArea  && prefectureArea && municipalityArea && choume && apartName && unitNum && (postArea || (postArea1 && postArea2))){
                 //電話番号
                 phoneArea.value = items.phoneNum;
@@ -147,29 +170,27 @@ function mercariAutoInput(autoSub){
                 //丁目・番地
                 choume.value = items.mercariRecentTrade.choume;
                 apartName.value = items.mercariRecentTrade.apart;
-                if(autoSub){
-                    if ( document.getElementById("address-ui-widgets-form-submit-button") ){
-                        document.getElementById("address-ui-widgets-form-submit-button").click();
-                    }
-                }
+                await clickUseThisAddressBtn(autoSub);
+
             }else{
                 alert("入力欄が存在しません");
             }
         }else{
             alert("データが存在しません");
             if(autoSub){
-                document.getElementById("add-new-address-popover-link").click();
+                document.getElementById("add-new-address-desktop-sasp-tango-link").click();
             }
         }
     });
 }
 
-function clipboardAutoInput(autoSub){
+async function clipboardAutoInput(autoSub){
+    console.log("clipboaxrdAutoInput", {autoSub});
     chrome.storage.local.get({
         phoneNum: '000-0000-0000'
-    },function(items){
+    }, async function(items){
         navigator.clipboard.readText()
-        .then((text) => {
+        .then(async (text) => {
             console.log('ペーストされたテキスト: ', text);
             let jsonOK = true;
             try {
@@ -177,25 +198,18 @@ function clipboardAutoInput(autoSub){
             } catch (error) {
                 jsonOK = false;
                 alert('メルカリShopsかオークタウン、ヤフーのポップアップウィンドウからコピーしてください。');
-                if(autoSub){
-                    document.getElementById("add-new-address-popover-link").click();
-                }
+                // if(autoSub){
+                //     document.getElementById("add-new-address-desktop-sasp-tango-link").click();
+                // }
             }
             if(jsonOK){
                 const data = JSON.parse(text);
-                const phoneArea        = document.getElementById("address-ui-widgets-enterAddressPhoneNumber");
-                const nameArea         = document.getElementById("address-ui-widgets-enterAddressFullName");
-                const postArea1        = document.getElementById("address-ui-widgets-enterAddressPostalCodeOne");
-                const postArea2        = document.getElementById("address-ui-widgets-enterAddressPostalCodeTwo");
-                const postArea         = document.getElementById("address-ui-widgets-enterAddressPostalCode");
-                const prefectureArea   = document.getElementById("address-ui-widgets-enterAddressStateOrRegion-dropdown-nativeId");
-                const municipalityArea = document.getElementById("address-ui-widgets-enterAddressLine1");
-                const choume           = document.getElementById("address-ui-widgets-enterAddressLine2");
-                const apartName        = document.getElementById("address-ui-widgets-enterBuildingOrCompanyName");
-                const unitNum          = document.getElementById("address-ui-widgets-enterUnitOrRoomNumber");
+                const [phoneArea, nameArea, postArea1, postArea2, postArea, prefectureArea, municipalityArea, choume, apartName, unitNum] = getAllInputElem();
+
                 if(phoneArea && nameArea  && prefectureArea && municipalityArea && choume && apartName && unitNum && (postArea || (postArea1 && postArea2))){
                     //電話番号
-                    phoneArea.value = data.tel || items.phoneNum;
+                    // phoneArea.value = data.tel || items.phoneNum;
+                    phoneArea.value = data.phoneNum;
                     //氏名
                     nameArea.value = data.name;
                     //郵便番号
@@ -212,11 +226,7 @@ function clipboardAutoInput(autoSub){
                     //丁目・番地
                     choume.value = data.choume;
                     apartName.value = data.apart;
-                    if(autoSub){
-                        if ( document.getElementById("address-ui-widgets-form-submit-button") ){
-                            document.getElementById("address-ui-widgets-form-submit-button").click();
-                        }
-                    }
+                    await clickUseThisAddressBtn(autoSub);
                 }else{
                     alert("入力欄が存在しません");
                 }
@@ -227,4 +237,60 @@ function clipboardAutoInput(autoSub){
             alert('クリップボードへのアクセスを許可してください');
         });
     });
+}
+
+
+async function clickUseThisAddressBtn(autoSub) {
+    if(autoSub){
+        await waitForElement(ADDRES_KAKUTEI_BTN_ID);
+        if ( document.querySelector(ADDRES_KAKUTEI_BTN_ID) ){
+            document.querySelector(ADDRES_KAKUTEI_BTN_ID).click();
+        } else {
+            console.log("この住所を使用ボタンが見つかりません。");
+        }
+    }
+}
+
+
+function getAllInputElem() {
+    const phoneArea = document.getElementById("address-ui-widgets-enterAddressPhoneNumber");
+    const nameArea = document.getElementById("address-ui-widgets-enterAddressFullName");
+    const postArea1 = document.getElementById("address-ui-widgets-enterAddressPostalCodeOne");
+    const postArea2 = document.getElementById("address-ui-widgets-enterAddressPostalCodeTwo");
+    const postArea = document.getElementById("address-ui-widgets-enterAddressPostalCode");
+    const prefectureArea = document.getElementById("address-ui-widgets-enterAddressStateOrRegion-dropdown-nativeId");
+    const municipalityArea = document.getElementById("address-ui-widgets-enterAddressLine1");
+    const choume = document.getElementById("address-ui-widgets-enterAddressLine2");
+    const apartName = document.getElementById("address-ui-widgets-enterBuildingOrCompanyName");
+    const unitNum = document.getElementById("address-ui-widgets-enterUnitOrRoomNumber");
+
+    return [phoneArea, nameArea, postArea1, postArea2, postArea, prefectureArea, municipalityArea, choume, apartName, unitNum];
+}
+
+
+
+
+async function waitForElement(target, timeout = TIME_OUT) {
+    // console.log("wait start", target);
+    const interval = 100; // チェック間隔（ミリ秒）
+    const endTime = Date.now() + timeout;
+
+    while (Date.now() < endTime) {
+        let element;
+
+        if (typeof target === 'string') {
+            // targetがCSSセレクタの場合
+            element = document.querySelector(target);
+        } else {
+            // targetがエレメントの場合
+            element = document.body.contains(target) ? target : null;
+        } 
+
+        if (element) {
+            console.log("wait fin");
+            return element;
+        }
+        await new Promise(resolve => setTimeout(resolve, interval));
+    }
+    throw new Error(`Timeout: Element with target "${target}" not found or not present in DOM.`);
 }

@@ -199,6 +199,25 @@ function getMercariMore() {
 
             console.log(obj.manageCode);
 
+            // https://mercari-shops.com/seller/shops/jW4jco98UZswPS5H2hg8Gn/orders/53xQZVy8TgWjyqoZQw4ZeZ のようなページで、「購入者」や「取引情報」エリアの情報を取得する。
+            function getTargetInfo(text, candidates) {
+              for (let i = 0; i < candidates.length; i++) {
+                if (candidates[i].innerText.match(text)) {
+                  return candidates[i].innerText.split(text)[1];
+                }
+              }
+              return "取得できませんでした。";
+            }
+
+            const buyerInfoUl = document.querySelector(
+              '[data-testid="buyer-info"]'
+            ).parentElement;
+            const candidates = buyerInfoUl.querySelectorAll("li");
+            obj.phoneNum = getTargetInfo("電話番号", candidates).replace(
+              /\s/gm,
+              ""
+            );
+
             if (orderId) {
               obj.id = orderId;
             }
